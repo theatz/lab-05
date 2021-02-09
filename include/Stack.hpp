@@ -20,18 +20,51 @@ template <typename T>
 class Stack
 {
  public:
-  Stack()
+  Stack():_head(nullptr){};
+  explicit Stack(const Stack& stack) = delete;
+  Stack(Stack&& stack)  noexcept = default;
+  auto operator=(Stack&& stack)  noexcept -> Stack& = default;
+  ~Stack()
   {
+    while (_head)
+    {
+      Node<T> *head = _head->prev;
+      delete _head;
+      _head = head;
+    }
+  };
 
+  void push(T&& value)
+  {
+    _head = new Node<T> {value, _head};
+  };
+
+  void push(const T& value)
+  {
+    _head = new Node<T> {value, _head};
+  };
+
+  void pop()
+  {
+    if (_head)
+    {
+      Node<T> *tmp = _head->prev;
+      delete _head;
+      _head = tmp;
+    } else
+    {
+      throw std::runtime_error("Empty stack");
+    }
   }
-  void push(T&& value);
-  void push(const T& value);
-  void pop();
-  const T& head() const;
+
+  const T& head() const
+  {
+    if(!_head) throw std::runtime_error("Empty stack");
+    return _head->data;
+  };
 
  private:
   Node<T> *_head;
 };
-
 
 #endif  // TEMPLATE_STACK_HPP
