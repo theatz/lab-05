@@ -22,8 +22,9 @@ class Stack
  public:
   Stack():_head(nullptr){};
   explicit Stack(const Stack& stack) = delete;
-  Stack(Stack&& stack)  noexcept = default;
-  auto operator=(Stack&& stack)  noexcept -> Stack& = default;
+  Stack(Stack&& stack) = default;
+  Stack& operator=(Stack&& stack) = default;
+
   ~Stack()
   {
     while (_head)
@@ -41,7 +42,7 @@ class Stack
 
   void push(const T& value)
   {
-    _head = new Node<T> {value, _head};
+    _head = new Node<T> {std::move(value), _head};
   };
 
   void pop()
