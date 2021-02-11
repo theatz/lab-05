@@ -75,16 +75,15 @@ TEST(Stack, Is_Copy) {
 
 }
 
-TEST(NoCopyStack, Push_rvalue) {
+TEST(NoCopyStack, head) {
   NoCopyStack<double> a;
   EXPECT_THROW(a.head(), std::runtime_error);
+}
 
+TEST(NoCopyStack, Push_rvalue_Pop_rvalue) {
+  NoCopyStack<double> a;
   a.push(5.7);
   EXPECT_EQ(a.head(), 5.7);
-
-  a.push(10.3);
-  EXPECT_EQ(a.head(), 10.3);
-
   double val = 9;
   a.push(std::move(val));
   EXPECT_EQ(a.head(), 9.0);

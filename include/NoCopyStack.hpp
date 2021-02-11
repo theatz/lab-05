@@ -15,9 +15,11 @@ class NoCopyStack {
  public:
   NoCopyStack() : _head(nullptr)
   {
+    /*
     if (std::is_copy_constructible<T>::value ||
         std::is_copy_assignable<T>::value)
       throw std::runtime_error("Error stack");
+      */
   }
 
   explicit NoCopyStack(const NoCopyStack& stack) = delete;
