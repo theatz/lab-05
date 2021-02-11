@@ -3,7 +3,6 @@
 //
 
 #include "Stack.hpp"
-#include <cstdlib>
 #include <iostream>
 #include <type_traits>
 
@@ -15,26 +14,32 @@ class NoCopyStack {
  public:
   NoCopyStack() : _head(nullptr)
   {
-    /*
-    if (std::is_copy_constructible<T>::value ||
-        std::is_copy_assignable<T>::value)
+    if (!(std::is_move_constructible<T>::value ||
+        std::is_move_assignable<T>::value))
       throw std::runtime_error("Error stack");
-      */
   }
 
   explicit NoCopyStack(const NoCopyStack& stack) = delete;
   NoCopyStack& operator=(const NoCopyStack& stack) = delete;
+  NoCopyStack& operator=(const NoCopyStack&& stack) noexcept
+  {
+    if (_head) _head = new Node<T>{std::move(stack), std::move(_head)};
+    else _head = new Node<T>{std::move(stack), nullptr};
+
+  }
   NoCopyStack(NoCopyStack&& stack) = default;
 
-  template <typename ... Args>
-  void push_emplace(Args&&... value)
+  void push_emplace()
   {
-    _head = new Node<T>{{std::forward<Args>(value)...}, _head};
+    return;
   }
+
+  template <typename Arg, typename... Args>
+  void push_emplace(Arg&& value,Args&&... values);
 
   void push(T&& value)
   {
-    _head = new Node<T>{std::move(value), _head};
+    _head = new Node<T>{std::move(value), std::move(_head)};
   }
   const T& head() const
   {
@@ -64,4 +69,15 @@ class NoCopyStack {
  private:
   Node<T> *_head;
 };
+
+template <typename T>
+template <typename Arg, typename... Args>
+void NoCopyStack<T>::push_emplace(Arg&& value,Args&&... values)
+{
+  push(std::move(value));
+  push_emplace(std::forward<Args>(values)...);
+  //if (values...) push_emplace(std::forward<Args>(values)...);
+    //_head = new Node<T>{{std::forward<Args>(value)...}, _head};
+
+}
 #endif  // TEMPLATE_NOCOPYSTACK_HPP

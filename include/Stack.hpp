@@ -3,7 +3,6 @@
 //
 
 
-#include <cstdlib>
 #include <iostream>
 #include <type_traits>
 #ifndef TEMPLATE_STACK_HPP
@@ -37,12 +36,12 @@ class Stack
 
   void push(T&& value)
   {
-    _head = new Node<T> {value, _head};
+    _head = new Node<T> {std::move(value), std::move(_head)};
   };
 
   void push(const T& value)
   {
-    _head = new Node<T> {std::move(value), _head};
+    _head = new Node<T> {std::move(value), std::move(_head)};
   };
 
   void pop()

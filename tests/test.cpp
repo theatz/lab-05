@@ -72,13 +72,19 @@ TEST(Stack, Is_Move) {
 TEST(Stack, Is_Copy) {
   EXPECT_FALSE(std::is_copy_constructible<Stack<int>>::value);
   EXPECT_FALSE(std::is_copy_assignable<Stack<int>>::value);
-
 }
 
 TEST(NoCopyStack, head) {
   NoCopyStack<double> a;
   EXPECT_THROW(a.head(), std::runtime_error);
 }
+
+template <typename T>
+struct Test1
+{
+  T first;
+  T second;
+};
 
 TEST(NoCopyStack, Push_rvalue_Pop_rvalue) {
   NoCopyStack<double> a;
@@ -87,5 +93,21 @@ TEST(NoCopyStack, Push_rvalue_Pop_rvalue) {
   double val = 9;
   a.push(std::move(val));
   EXPECT_EQ(a.head(), 9.0);
+}
 
+TEST(NoCopyStack, Push_emplace) {
+  NoCopyStack<int> a;
+  a.push_emplace(14, 10, 1, 7, 2, 3, 5, 9, 17);
+  //std::cout << a.head();
+  EXPECT_EQ(a.head(), 17);
+}
+
+TEST(NoCopyStack, Is_Move) {
+  EXPECT_TRUE(std::is_move_constructible<NoCopyStack<int>>::value);
+  EXPECT_TRUE(std::is_move_assignable<NoCopyStack<int>>::value);
+}
+
+TEST(NoCopyStack, Is_Copy) {
+  EXPECT_FALSE(std::is_copy_constructible<NoCopyStack<int>>::value);
+  EXPECT_FALSE(std::is_copy_assignable<NoCopyStack<int>>::value);
 }
